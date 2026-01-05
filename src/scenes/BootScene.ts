@@ -54,6 +54,11 @@ export class BootScene extends Phaser.Scene {
     this.load.image('sun', '/assets/images/sun.png');
     this.load.image('bullet', '/assets/images/bullet.png');
 
+    // 菜单资源
+    this.load.image('menu_background', '/assets/images/menu_background.png');
+    this.load.image('game_logo', '/assets/images/game_logo.png');
+    this.load.image('start_button', '/assets/images/start_button.png');
+
     // 植物
     this.load.image('sunflower', '/assets/images/sunflower.png');
     this.load.image('peashooter', '/assets/images/peashooter.png');
