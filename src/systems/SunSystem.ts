@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_CONFIG } from '../config/GameConfig';
 import { Sun } from '../entities/Sun';
 import { GameScene } from '../scenes/GameScene';
+import { AudioManager } from './AudioManager';
 
 /**
  * 阳光系统 - 管理阳光的生成、收集和消耗
@@ -74,7 +75,7 @@ export class SunSystem {
    */
   private dropSun(): void {
     const { GRID, WIDTH } = GAME_CONFIG;
-    
+
     // 随机X位置（在草坪范围内）
     const minX = GRID.OFFSET_X + 50;
     const maxX = GRID.OFFSET_X + GRID.COLS * GRID.CELL_WIDTH - 50;
@@ -103,6 +104,9 @@ export class SunSystem {
   private collectSun(sun: Sun): void {
     // 移除监听
     sun.removeInteractive();
+
+    // 播放收集阳光音效
+    AudioManager.getInstance().playClickSun();
 
     // 飞向阳光计数器的动画
     this.scene.tweens.add({

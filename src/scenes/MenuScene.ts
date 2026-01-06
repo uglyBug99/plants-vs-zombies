@@ -1,11 +1,13 @@
 import Phaser from 'phaser';
 import { GAME_CONFIG } from '../config/GameConfig';
+import { AudioManager } from '../systems/AudioManager';
 
 /**
  * 菜单场景 - 游戏主菜单
  */
 export class MenuScene extends Phaser.Scene {
   private buttonContainer!: Phaser.GameObjects.Container;
+  private audioManager!: AudioManager;
 
   constructor() {
     super({ key: 'MenuScene' });
@@ -14,6 +16,11 @@ export class MenuScene extends Phaser.Scene {
   create(): void {
     const { WIDTH, HEIGHT } = GAME_CONFIG;
 
+    // 初始化音频管理器并播放背景音乐
+    this.audioManager = AudioManager.getInstance();
+    this.audioManager.setScene(this);
+    this.audioManager.playBGM();
+
     // 添加背景图片
     const bg = this.add.image(WIDTH / 2, HEIGHT / 2, 'menu_background');
     bg.setDisplaySize(WIDTH, HEIGHT);
@@ -21,7 +28,7 @@ export class MenuScene extends Phaser.Scene {
     // 添加游戏标题图片（放在左侧空白区域）
     const title = this.add.image(250, HEIGHT - 100, 'game_title');
     title.setDisplaySize(500, 300);
-    
+
     // 标题浮动动画
     this.tweens.add({
       targets: title,
@@ -67,6 +74,7 @@ export class MenuScene extends Phaser.Scene {
 
     // 点击开始游戏
     this.buttonContainer.on('pointerdown', () => {
+      this.audioManager.playTap();
       this.tweens.killTweensOf(this.buttonContainer);
       this.tweens.add({
         targets: this.buttonContainer,

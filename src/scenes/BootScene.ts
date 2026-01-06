@@ -50,6 +50,7 @@ export class BootScene extends Phaser.Scene {
 
   private loadAssets(): void {
     const basePath = '/assets/Image';
+    const musicPath = '/assets/Music';
 
     // 背景资源
     this.load.image('background', `${basePath}/BackgroundImage/yard.jpg`);
@@ -58,10 +59,10 @@ export class BootScene extends Phaser.Scene {
     this.load.image('game_logo', `${basePath}/BackgroundImage/IconImage.png`);
     this.load.image('game_title', `${basePath}/BackgroundImage/title.png`);
     this.load.image('sun_board', `${basePath}/BackgroundImage/sunBoard.png`);
-    
+
     // 阳光（GIF 作为精灵图）
     this.load.image('sun', `${basePath}/BackgroundImage/Sun.gif`);
-    
+
     // 子弹
     this.load.image('bullet', `${basePath}/BulletImage/PeaBullet.png`);
 
@@ -80,6 +81,21 @@ export class BootScene extends Phaser.Scene {
     this.load.image('zombie_normal_attack', `${basePath}/ZombieImage/NormalZombieImage/ZombieAttackImage.gif`);
     this.load.image('zombie_conehead', `${basePath}/ZombieImage/ConeheadZombie/ConeheadZombie.gif`);
     this.load.image('zombie_conehead_attack', `${basePath}/ZombieImage/ConeheadZombie/ConeheadZombieAttack.gif`);
+
+    // 音频资源
+    this.load.audio('bgm', `${musicPath}/bgm.wav`);
+    this.load.audio('tap', `${musicPath}/tap.wav`);
+    this.load.audio('clickSun', `${musicPath}/clickSun.wav`);
+    this.load.audio('readysetplant', `${musicPath}/readysetplant.wav`);
+    this.load.audio('zombieComing', `${musicPath}/zombieComing.wav`);
+    this.load.audio('hugeWave', `${musicPath}/hugeWave.wav`);
+    this.load.audio('finalWave', `${musicPath}/finalWave.wav`);
+    this.load.audio('zombieEat', `${musicPath}/zombieEat.wav`);
+    this.load.audio('plantHit', `${musicPath}/plantHit.wav`);
+    this.load.audio('cherryBomb', `${musicPath}/CherryBomb.wav`);
+    this.load.audio('explosion', `${musicPath}/explosion.wav`);
+    this.load.audio('gameOver', `${musicPath}/gameOver.wav`);
+    this.load.audio('gameWin', `${musicPath}/gameWin.wav`);
   }
 
   create(): void {

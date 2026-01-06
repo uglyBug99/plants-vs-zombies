@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_CONFIG, PlantType, ZombieType } from '../config/GameConfig';
 import { GridSystem } from '../systems/GridSystem';
 import { SunSystem } from '../systems/SunSystem';
+import { AudioManager } from '../systems/AudioManager';
 import { Plant, Sunflower, Peashooter, Wallnut } from '../entities/Plant';
 import { Zombie } from '../entities/Zombie';
 import { Bullet } from '../entities/Bullet';
@@ -13,6 +14,7 @@ export class GameScene extends Phaser.Scene {
   // 系统
   private gridSystem!: GridSystem;
   private sunSystem!: SunSystem;
+  private audioManager!: AudioManager;
 
   // 游戏对象组
   private plants!: Phaser.GameObjects.Group;
@@ -29,6 +31,9 @@ export class GameScene extends Phaser.Scene {
   private waveTimer!: Phaser.Time.TimerEvent;
   private currentWave: number = 0;
   private zombiesRemaining: number = 0;
+
+  // 音效控制
+  private isPlayingEatSound: boolean = false;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -53,6 +58,8 @@ export class GameScene extends Phaser.Scene {
   private initSystems(): void {
     this.gridSystem = new GridSystem();
     this.sunSystem = new SunSystem(this);
+    this.audioManager = AudioManager.getInstance();
+    this.audioManager.setScene(this);
   }
 
   private createGroups(): void {
@@ -71,7 +78,7 @@ export class GameScene extends Phaser.Scene {
 
     // 绘制网格指示（半透明，方便看清格子位置）
     const graphics = this.add.graphics();
-    
+
     // 草坪网格线
     for (let row = 0; row < GRID.ROWS; row++) {
       for (let col = 0; col < GRID.COLS; col++) {
@@ -207,6 +214,9 @@ export class GameScene extends Phaser.Scene {
     const config = this.getPlantConfig(this.selectedPlant);
     if (!this.sunSystem.spendSun(config.cost)) return;
 
+    // 播放放置植物音效
+    this.audioManager.playTap();
+
     // 放置植物
     this.placePlant(this.selectedPlant, row, col);
 
@@ -244,6 +254,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   private startGame(): void {
+    // 播放背景音乐
+    this.audioManager.playBGM();
+
+    // 播放游戏开始音效
+    this.audioManager.playReadySetPlant();
+
     // 开始天降阳光
     this.sunSystem.startDropping();
 
@@ -257,6 +273,17 @@ export class GameScene extends Phaser.Scene {
     this.currentWave++;
     const zombieCount = 3 + this.currentWave * 2;
     this.zombiesRemaining = zombieCount;
+
+    // 播放僵尸来袭警报
+    if (this.currentWave === 1) {
+      this.audioManager.playZombieComing();
+    } else if (this.currentWave >= 5) {
+      this.audioManager.playFinalWave();
+    } else if (this.currentWave >= 3) {
+      this.audioManager.playHugeWave();
+    } else {
+      this.audioManager.playZombieComing();
+    }
 
     // 间隔生成僵尸
     let spawned = 0;
@@ -315,7 +342,7 @@ export class GameScene extends Phaser.Scene {
     // 子弹与僵尸碰撞
     this.bullets.getChildren().forEach((bulletObj) => {
       const bullet = bulletObj as Bullet;
-      
+
       this.zombies.getChildren().forEach((zombieObj) => {
         const zombie = zombieObj as Zombie;
 
@@ -323,6 +350,7 @@ export class GameScene extends Phaser.Scene {
           const distance = Phaser.Math.Distance.Between(bullet.x, bullet.y, zombie.x, zombie.y);
           if (distance < 40) {
             zombie.takeDamage(GAME_CONFIG.BULLET.DAMAGE);
+            this.audioManager.playPlantHit();
             bullet.destroy();
           }
         }
@@ -330,6 +358,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     // 僵尸与植物碰撞
+    let isZombieEating = false;
     this.zombies.getChildren().forEach((zombieObj) => {
       const zombie = zombieObj as Zombie;
       const zombieRow = zombie.getData('row');
@@ -341,9 +370,20 @@ export class GameScene extends Phaser.Scene {
         if (zombieRow === plantRow && Math.abs(zombie.x - plant.x) < 40) {
           zombie.setAttacking(true);
           plant.takeDamage(GAME_CONFIG.ZOMBIES.NORMAL.damage * 0.016); // 每帧伤害
+          isZombieEating = true;
         }
       });
     });
+
+    // 播放僵尸啃咬音效（使用标志位避免重复播放）
+    if (isZombieEating && !this.isPlayingEatSound) {
+      this.isPlayingEatSound = true;
+      this.audioManager.playZombieEat();
+      // 1秒后才能再次播放
+      this.time.delayedCall(1000, () => {
+        this.isPlayingEatSound = false;
+      });
+    }
   }
 
   private checkGameOver(): void {
@@ -358,7 +398,14 @@ export class GameScene extends Phaser.Scene {
 
   private gameOver(win: boolean): void {
     this.scene.pause();
-    
+
+    // 播放游戏结束音效
+    if (win) {
+      this.audioManager.playGameWin();
+    } else {
+      this.audioManager.playGameOver();
+    }
+
     const { WIDTH, HEIGHT } = GAME_CONFIG;
     const text = win ? '胜利！' : '游戏结束';
     const color = win ? '#00FF00' : '#FF0000';
@@ -383,6 +430,7 @@ export class GameScene extends Phaser.Scene {
     restartButton.setInteractive({ useHandCursor: true });
 
     restartButton.on('pointerdown', () => {
+      this.audioManager.playTap();
       this.scene.restart();
     });
   }
