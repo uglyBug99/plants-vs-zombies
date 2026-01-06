@@ -62,6 +62,32 @@ export class GameScene extends Phaser.Scene {
     this.audioManager.setScene(this);
   }
 
+  /**
+   * 获取指定列的X起始坐标
+   */
+  private getColX(col: number): number {
+    const { GRID } = GAME_CONFIG;
+    let x = GRID.OFFSET_X;
+    for (let i = 0; i < col; i++) {
+      x += GRID.COL_WIDTHS[i];
+    }
+    return x;
+  }
+
+  /**
+   * 获取指定列的中心X坐标
+   */
+  private getColCenterX(col: number): number {
+    return this.getColX(col) + GAME_CONFIG.GRID.COL_WIDTHS[col] / 2;
+  }
+
+  /**
+   * 获取网格总宽度
+   */
+  private getGridTotalWidth(): number {
+    return GAME_CONFIG.GRID.COL_WIDTHS.reduce((sum, w) => sum + w, 0);
+  }
+
   private createGroups(): void {
     this.plants = this.add.group();
     this.zombies = this.add.group();
@@ -70,26 +96,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private drawBackground(): void {
-    const { GRID, WIDTH, HEIGHT } = GAME_CONFIG;
+    const { WIDTH, HEIGHT } = GAME_CONFIG;
 
     // 添加背景图片
     const bg = this.add.image(WIDTH / 2, HEIGHT / 2, 'background');
     bg.setDisplaySize(WIDTH, HEIGHT);
-
-    // 绘制网格指示（半透明，方便看清格子位置）
-    const graphics = this.add.graphics();
-
-    // 草坪网格线
-    for (let row = 0; row < GRID.ROWS; row++) {
-      for (let col = 0; col < GRID.COLS; col++) {
-        const x = GRID.OFFSET_X + col * GRID.CELL_WIDTH;
-        const y = GRID.OFFSET_Y + row * GRID.CELL_HEIGHT;
-
-        // 格子边框（淡淡的边框方便定位）
-        graphics.lineStyle(1, 0x000000, 0.1);
-        graphics.strokeRect(x, y, GRID.CELL_WIDTH, GRID.CELL_HEIGHT);
-      }
-    }
   }
 
   private drawGrid(): void {
@@ -98,10 +109,11 @@ export class GameScene extends Phaser.Scene {
 
     for (let row = 0; row < GRID.ROWS; row++) {
       for (let col = 0; col < GRID.COLS; col++) {
-        const x = GRID.OFFSET_X + col * GRID.CELL_WIDTH + GRID.CELL_WIDTH / 2;
+        const x = this.getColCenterX(col);
         const y = GRID.OFFSET_Y + row * GRID.CELL_HEIGHT + GRID.CELL_HEIGHT / 2;
+        const colWidth = GRID.COL_WIDTHS[col];
 
-        const zone = this.add.zone(x, y, GRID.CELL_WIDTH, GRID.CELL_HEIGHT);
+        const zone = this.add.zone(x, y, colWidth, GRID.CELL_HEIGHT);
         zone.setInteractive({ useHandCursor: true });
         zone.setData('row', row);
         zone.setData('col', col);
@@ -230,7 +242,7 @@ export class GameScene extends Phaser.Scene {
 
   private placePlant(type: PlantType, row: number, col: number): void {
     const { GRID } = GAME_CONFIG;
-    const x = GRID.OFFSET_X + col * GRID.CELL_WIDTH + GRID.CELL_WIDTH / 2;
+    const x = this.getColCenterX(col);
     const y = GRID.OFFSET_Y + row * GRID.CELL_HEIGHT + GRID.CELL_HEIGHT / 2;
 
     let plant: Plant;
@@ -304,8 +316,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   private spawnZombie(type: ZombieType, row: number): void {
-    const { GRID } = GAME_CONFIG;
-    const x = GRID.OFFSET_X + GRID.COLS * GRID.CELL_WIDTH + 50;
+    const { GRID, WIDTH } = GAME_CONFIG;
+    const x = WIDTH + 50; // 从画面最右边进入
     const y = GRID.OFFSET_Y + row * GRID.CELL_HEIGHT + GRID.CELL_HEIGHT / 2;
 
     const zombie = new Zombie(this, x, y, type, row);

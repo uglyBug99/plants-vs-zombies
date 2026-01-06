@@ -15,14 +15,14 @@ export abstract class Plant extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, x: number, y: number, type: PlantType, health: number, imageKey: string) {
     super(scene, x, y);
-    
+
     this.plantType = type;
     this.health = health;
     this.maxHealth = health;
 
     // 创建植物精灵（使用图片）
     this.sprite = scene.add.image(0, 0, imageKey);
-    this.sprite.setDisplaySize(60, 75);
+    this.sprite.setDisplaySize(45, 55);
     this.add(this.sprite);
 
     // 创建血条
@@ -35,7 +35,7 @@ export abstract class Plant extends Phaser.GameObjects.Container {
 
   protected updateHealthBar(): void {
     this.healthBar.clear();
-    
+
     const barWidth = 50;
     const barHeight = 6;
     const y = -45;
@@ -79,10 +79,23 @@ export abstract class Plant extends Phaser.GameObjects.Container {
 export class Sunflower extends Plant {
   private lastSunTime: number = 0;
   private sunInterval: number;
+  private baseSunInterval: number;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, PlantType.SUNFLOWER, GAME_CONFIG.PLANTS.SUNFLOWER.health, 'sunflower');
-    this.sunInterval = GAME_CONFIG.PLANTS.SUNFLOWER.sunInterval;
+    this.baseSunInterval = GAME_CONFIG.PLANTS.SUNFLOWER.sunInterval;
+    this.sunInterval = this.getRandomInterval();
+    // 设置初始时间为当前时间，避免种下去立即产生阳光
+    this.lastSunTime = scene.time.now;
+  }
+
+  /**
+   * 获取随机间隔（基础间隔的50%-150%，平均值保持不变）
+   */
+  private getRandomInterval(): number {
+    const min = this.baseSunInterval * 0.5;
+    const max = this.baseSunInterval * 1.5;
+    return Phaser.Math.Between(min, max);
   }
 
   public update(time: number, _delta: number): void {
@@ -90,17 +103,19 @@ export class Sunflower extends Plant {
     if (time - this.lastSunTime > this.sunInterval) {
       this.lastSunTime = time;
       this.produceSun();
+      // 每次产生阳光后重新计算下一次的随机间隔
+      this.sunInterval = this.getRandomInterval();
     }
   }
 
   private produceSun(): void {
     const gameScene = this.scene as GameScene;
-    
+
     // 创建阳光（使用图片）
     const sun = this.scene.add.image(this.x, this.y - 30, 'sun');
     sun.setDisplaySize(40, 40);
     sun.setInteractive({ useHandCursor: true });
-    
+
     // 阳光动画
     this.scene.tweens.add({
       targets: sun,

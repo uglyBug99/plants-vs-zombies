@@ -76,9 +76,12 @@ export class SunSystem {
   private dropSun(): void {
     const { GRID, WIDTH } = GAME_CONFIG;
 
+    // 计算网格总宽度
+    const gridTotalWidth = GRID.COL_WIDTHS.reduce((sum, w) => sum + w, 0);
+
     // 随机X位置（在草坪范围内）
     const minX = GRID.OFFSET_X + 50;
-    const maxX = GRID.OFFSET_X + GRID.COLS * GRID.CELL_WIDTH - 50;
+    const maxX = GRID.OFFSET_X + gridTotalWidth - 50;
     const x = Phaser.Math.Between(minX, maxX);
 
     // 随机Y目标位置

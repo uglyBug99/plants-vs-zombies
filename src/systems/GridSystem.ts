@@ -8,7 +8,7 @@ export class GridSystem {
 
   constructor() {
     const { ROWS, COLS } = GAME_CONFIG.GRID;
-    
+
     // 初始化网格，全部为空
     this.grid = Array(ROWS).fill(null).map(() => Array(COLS).fill(false));
   }
@@ -39,12 +39,24 @@ export class GridSystem {
   }
 
   /**
+   * 获取指定列的X起始坐标
+   */
+  private getColX(col: number): number {
+    const { OFFSET_X, COL_WIDTHS } = GAME_CONFIG.GRID;
+    let x = OFFSET_X;
+    for (let i = 0; i < col; i++) {
+      x += COL_WIDTHS[i];
+    }
+    return x;
+  }
+
+  /**
    * 获取格子的世界坐标
    */
   public getCellPosition(row: number, col: number): { x: number; y: number } {
-    const { OFFSET_X, OFFSET_Y, CELL_WIDTH, CELL_HEIGHT } = GAME_CONFIG.GRID;
+    const { OFFSET_Y, CELL_HEIGHT, COL_WIDTHS } = GAME_CONFIG.GRID;
     return {
-      x: OFFSET_X + col * CELL_WIDTH + CELL_WIDTH / 2,
+      x: this.getColX(col) + COL_WIDTHS[col] / 2,
       y: OFFSET_Y + row * CELL_HEIGHT + CELL_HEIGHT / 2,
     };
   }
@@ -53,9 +65,19 @@ export class GridSystem {
    * 根据世界坐标获取格子位置
    */
   public getGridPosition(worldX: number, worldY: number): { row: number; col: number } | null {
-    const { OFFSET_X, OFFSET_Y, CELL_WIDTH, CELL_HEIGHT, ROWS, COLS } = GAME_CONFIG.GRID;
+    const { OFFSET_X, OFFSET_Y, CELL_HEIGHT, ROWS, COLS, COL_WIDTHS } = GAME_CONFIG.GRID;
 
-    const col = Math.floor((worldX - OFFSET_X) / CELL_WIDTH);
+    // 计算列号（需要遍历COL_WIDTHS）
+    let col = -1;
+    let accX = OFFSET_X;
+    for (let i = 0; i < COLS; i++) {
+      if (worldX >= accX && worldX < accX + COL_WIDTHS[i]) {
+        col = i;
+        break;
+      }
+      accX += COL_WIDTHS[i];
+    }
+
     const row = Math.floor((worldY - OFFSET_Y) / CELL_HEIGHT);
 
     if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {

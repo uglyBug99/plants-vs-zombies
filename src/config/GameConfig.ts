@@ -8,16 +8,17 @@ export const GAME_CONFIG = {
   GRID: {
     ROWS: 5,
     COLS: 9,
-    CELL_WIDTH: 80,
+    // 每列的宽度
+    COL_WIDTHS: [60, 50, 65, 55, 60, 55, 60, 50, 65],
     CELL_HEIGHT: 100,
-    OFFSET_X: 250, // 草坪起始X坐标
+    OFFSET_X: 180, // 草坪起始X坐标
     OFFSET_Y: 80, // 草坪起始Y坐标
   },
 
   // 阳光配置
   SUN: {
-    INITIAL: 50,
-    DROP_INTERVAL: 10000, // 天降阳光间隔（毫秒）
+    INITIAL: 1000,
+    DROP_INTERVAL: 5000, // 天降阳光间隔（毫秒）
     VALUE: 25,
     FALL_SPEED: 50,
   },
@@ -28,7 +29,7 @@ export const GAME_CONFIG = {
       name: "向日葵",
       cost: 50,
       health: 100,
-      sunInterval: 24000, // 产出阳光间隔
+      sunInterval: 12000, // 产出阳光间隔
     },
     PEASHOOTER: {
       name: "豌豆射手",
@@ -49,13 +50,13 @@ export const GAME_CONFIG = {
     NORMAL: {
       name: "普通僵尸",
       health: 100,
-      speed: 20,
+      speed: 12,
       damage: 20,
     },
     CONEHEAD: {
       name: "路障僵尸",
       health: 200,
-      speed: 20,
+      speed: 12,
       damage: 20,
     },
   },
