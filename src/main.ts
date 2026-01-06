@@ -3,6 +3,7 @@ import { GAME_CONFIG } from './config/GameConfig';
 import { BootScene } from './scenes/BootScene';
 import { MenuScene } from './scenes/MenuScene';
 import { GameScene } from './scenes/GameScene';
+// import GifLoaderPlugin from 'phaser3-rex-plugins/plugins/gifloader-plugin.js';
 
 import './style.css';
 
@@ -16,6 +17,15 @@ const config: Phaser.Types.Core.GameConfig = {
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
+  plugins: {
+    global: [
+      // {
+      //   key: 'rexGifLoader',
+      //   plugin: GifLoaderPlugin,
+      //   start: true,
+      // },
+    ],
   },
   scene: [BootScene, MenuScene, GameScene],
 };

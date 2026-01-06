@@ -134,7 +134,8 @@ export class GameScene extends Phaser.Scene {
     toolbar.fillRect(0, 0, WIDTH, 70);
 
     // 阳光计数（使用图片图标）
-    const sunIcon = this.add.image(50, 35, 'sun');
+    // 注意：GifUtils加载的'sun'是动画Key，'sun_texture'是纹理Key
+    const sunIcon = this.add.image(50, 35, 'sun_texture');
     sunIcon.setDisplaySize(40, 40);
     this.sunCountText = this.add.text(80, 25, `${GAME_CONFIG.SUN.INITIAL}`, {
       fontSize: '24px',

@@ -13,6 +13,8 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
-    "phaser": "^3.90.0"
+    "libgif": "^0.0.3",
+    "phaser": "^3.90.0",
+    "phaser3-rex-plugins": "^1.80.17"
   }
 }

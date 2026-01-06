@@ -11,7 +11,7 @@ export abstract class Plant extends Phaser.GameObjects.Container {
   protected maxHealth: number;
   protected plantType: PlantType;
   protected healthBar: Phaser.GameObjects.Graphics;
-  protected sprite: Phaser.GameObjects.Image;
+  protected sprite: any; // GIF sprite
 
   constructor(scene: Phaser.Scene, x: number, y: number, type: PlantType, health: number, imageKey: string) {
     super(scene, x, y);
@@ -20,8 +20,8 @@ export abstract class Plant extends Phaser.GameObjects.Container {
     this.health = health;
     this.maxHealth = health;
 
-    // 创建植物精灵（使用图片）
-    this.sprite = scene.add.image(0, 0, imageKey);
+    // 使用GifUtils生成的动画
+    this.sprite = scene.add.sprite(0, 0, imageKey + '_texture').play(imageKey);
     this.sprite.setDisplaySize(45, 55);
     this.add(this.sprite);
 
@@ -112,7 +112,7 @@ export class Sunflower extends Plant {
     const gameScene = this.scene as GameScene;
 
     // 创建阳光（使用图片）
-    const sun = this.scene.add.image(this.x, this.y - 30, 'sun');
+    const sun = this.scene.add.sprite(this.x, this.y - 30, 'sun_texture').play('sun');
     sun.setDisplaySize(40, 40);
     sun.setInteractive({ useHandCursor: true });
 

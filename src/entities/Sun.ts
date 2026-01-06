@@ -4,16 +4,17 @@ import { GAME_CONFIG } from '../config/GameConfig';
 /**
  * 阳光类 - 天降阳光和植物产出的阳光
  */
-export class Sun extends Phaser.GameObjects.Image {
+export class Sun extends Phaser.GameObjects.Sprite {
   private targetY: number;
   private falling: boolean = true;
 
   constructor(scene: Phaser.Scene, x: number, targetY: number) {
     // 从屏幕顶部开始，使用阳光图片
-    super(scene, x, -20, 'sun');
+    super(scene, x, -20, 'sun_texture');
+    this.play('sun');
 
     this.targetY = targetY;
-    
+
     // 设置大小
     this.setDisplaySize(45, 45);
 
