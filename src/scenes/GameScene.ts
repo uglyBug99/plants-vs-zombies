@@ -63,39 +63,26 @@ export class GameScene extends Phaser.Scene {
   }
 
   private drawBackground(): void {
-    // 绘制草坪背景
-    const graphics = this.add.graphics();
     const { GRID, WIDTH, HEIGHT } = GAME_CONFIG;
 
-    // 天空背景
-    graphics.fillGradientStyle(0x87CEEB, 0x87CEEB, 0x98FB98, 0x98FB98);
-    graphics.fillRect(0, 0, WIDTH, HEIGHT);
+    // 添加背景图片
+    const bg = this.add.image(WIDTH / 2, HEIGHT / 2, 'background');
+    bg.setDisplaySize(WIDTH, HEIGHT);
 
-    // 草坪
+    // 绘制网格指示（半透明，方便看清格子位置）
+    const graphics = this.add.graphics();
+    
+    // 草坪网格线
     for (let row = 0; row < GRID.ROWS; row++) {
       for (let col = 0; col < GRID.COLS; col++) {
         const x = GRID.OFFSET_X + col * GRID.CELL_WIDTH;
         const y = GRID.OFFSET_Y + row * GRID.CELL_HEIGHT;
 
-        // 交替深浅绿色
-        const color = (row + col) % 2 === 0 ? 0x7CFC00 : 0x32CD32;
-        graphics.fillStyle(color, 1);
-        graphics.fillRect(x, y, GRID.CELL_WIDTH, GRID.CELL_HEIGHT);
-
-        // 格子边框
-        graphics.lineStyle(1, 0x006400, 0.3);
+        // 格子边框（淡淡的边框方便定位）
+        graphics.lineStyle(1, 0x000000, 0.1);
         graphics.strokeRect(x, y, GRID.CELL_WIDTH, GRID.CELL_HEIGHT);
       }
     }
-
-    // 左侧区域（房子）
-    graphics.fillStyle(0x8B4513, 1);
-    graphics.fillRect(0, 50, 240, 520);
-
-    // 右侧区域（僵尸出生区）
-    graphics.fillStyle(0x654321, 0.5);
-    graphics.fillRect(GRID.OFFSET_X + GRID.COLS * GRID.CELL_WIDTH, GRID.OFFSET_Y, 
-                       50, GRID.ROWS * GRID.CELL_HEIGHT);
   }
 
   private drawGrid(): void {

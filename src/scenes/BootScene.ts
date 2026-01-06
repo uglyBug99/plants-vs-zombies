@@ -49,29 +49,37 @@ export class BootScene extends Phaser.Scene {
   }
 
   private loadAssets(): void {
-    // 加载图片资源（使用绝对路径从 public 目录加载）
-    this.load.image('background', '/assets/images/background.png');
-    this.load.image('sun', '/assets/images/sun.png');
-    this.load.image('bullet', '/assets/images/bullet.png');
+    const basePath = '/assets/Image';
 
-    // 菜单资源
-    this.load.image('menu_background', '/assets/images/menu_background.png');
-    this.load.image('game_logo', '/assets/images/game_logo.png');
-    this.load.image('start_button', '/assets/images/start_button.png');
+    // 背景资源
+    this.load.image('background', `${basePath}/BackgroundImage/yard.jpg`);
+    this.load.image('menu_background', `${basePath}/BackgroundImage/menu.png`);
+    this.load.image('start_button', `${basePath}/BackgroundImage/start.png`);
+    this.load.image('game_logo', `${basePath}/BackgroundImage/IconImage.png`);
+    this.load.image('game_title', `${basePath}/BackgroundImage/title.png`);
+    this.load.image('sun_board', `${basePath}/BackgroundImage/sunBoard.png`);
+    
+    // 阳光（GIF 作为精灵图）
+    this.load.image('sun', `${basePath}/BackgroundImage/Sun.gif`);
+    
+    // 子弹
+    this.load.image('bullet', `${basePath}/BulletImage/PeaBullet.png`);
 
-    // 植物
-    this.load.image('sunflower', '/assets/images/sunflower.png');
-    this.load.image('peashooter', '/assets/images/peashooter.png');
-    this.load.image('wallnut', '/assets/images/wallnut.png');
+    // 植物（GIF 动图）
+    this.load.image('sunflower', `${basePath}/PlantImage/SunFlower.gif`);
+    this.load.image('peashooter', `${basePath}/PlantImage/Peashooter.gif`);
+    this.load.image('wallnut', `${basePath}/PlantImage/WallNut.gif`);
 
-    // 僵尸
-    this.load.image('zombie_normal', '/assets/images/zombie_normal.png');
-    this.load.image('zombie_conehead', '/assets/images/zombie_conehead.png');
+    // 植物卡片
+    this.load.image('card_sunflower', `${basePath}/PlantCardImage/SunflowerCard.jpg`);
+    this.load.image('card_peashooter', `${basePath}/PlantCardImage/PeashooterCard.gif`);
+    this.load.image('card_wallnut', `${basePath}/PlantCardImage/WallNutCard.png`);
 
-    // 卡片
-    this.load.image('card_sunflower', '/assets/images/card_sunflower.png');
-    this.load.image('card_peashooter', '/assets/images/card_peashooter.png');
-    this.load.image('card_wallnut', '/assets/images/card_wallnut.png');
+    // 僵尸（GIF 动图）
+    this.load.image('zombie_normal', `${basePath}/ZombieImage/NormalZombieImage/ZombieAdvanceImage.gif`);
+    this.load.image('zombie_normal_attack', `${basePath}/ZombieImage/NormalZombieImage/ZombieAttackImage.gif`);
+    this.load.image('zombie_conehead', `${basePath}/ZombieImage/ConeheadZombie/ConeheadZombie.gif`);
+    this.load.image('zombie_conehead_attack', `${basePath}/ZombieImage/ConeheadZombie/ConeheadZombieAttack.gif`);
   }
 
   create(): void {
